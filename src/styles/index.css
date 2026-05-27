@@ -1,0 +1,555 @@
+/* ---------- Designtokens ---------- */
+:root {
+  /* Brand (logo teal/cyaan) */
+  --color-primary: #08a3de;
+  --color-primary-dark: #31739e;
+  --color-primary-soft: #e4f4fb;
+
+  /* CTA (charcoal pill uit voorbeeld style) */
+  --color-cta: #484450;
+  --color-cta-dark: #2f2c36;
+
+  /* Lavendel accent (selectie-states, dropdown-vlakken) */
+  --color-accent-soft: #efedf9;
+  --color-accent-border: #d8d4ec;
+
+  /* Vlakken */
+  --color-bg: #f5f3fb;
+  --color-bg-top: #d9d4ee;
+  --color-surface: #ffffff;
+
+  /* Tekst */
+  --color-text: #1a1a22;
+  --color-text-muted: #6c6973;
+
+  --color-border: #e3e1ea;
+  --color-error: #d1342f;
+  --color-error-soft: #fde8e7;
+  --color-success: #1f9d55;
+  --color-success-soft: #e3f6ec;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 18px 40px rgba(72, 68, 80, 0.10);
+  --shadow-btn: 0 8px 20px rgba(72, 68, 80, 0.18);
+
+  --font-base: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-image: linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg) 32%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* ---------- Layout ---------- */
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.app-header {
+  padding: 20px 20px 8px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.brand-logo {
+  display: block;
+  height: 36px;
+  width: auto;
+  max-width: 220px;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 16px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+/* ---------- Card ---------- */
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 28px 22px;
+  border: 1px solid rgba(15, 26, 43, 0.04);
+}
+
+/* ---------- Form intro ---------- */
+.form-intro {
+  margin-bottom: 22px;
+}
+
+.form-title {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.form-subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 15px;
+}
+
+/* ---------- Fields ---------- */
+.form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  display: inline-flex;
+  gap: 4px;
+}
+
+.field-required {
+  color: var(--color-primary);
+}
+
+.field-input {
+  appearance: none;
+  width: 100%;
+  font-size: 16px; /* prevents iOS zoom */
+  padding: 12px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  min-height: 48px;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: var(--color-accent-border);
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
+}
+
+.field-textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.field--error .field-input {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+}
+
+.field-error {
+  font-size: 13px;
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Interests ---------- */
+.interests {
+  border: 0;
+  padding: 0;
+  margin: 18px 0 6px;
+}
+
+.interests-legend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.interests-list {
+  display: grid;
+  gap: 10px;
+}
+
+/* ---------- Checkbox ---------- */
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  cursor: pointer;
+  min-height: 48px;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.checkbox:has(input:checked) {
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-soft);
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox-box {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.checkbox-box svg {
+  opacity: 0;
+  transition: opacity 80ms ease;
+}
+
+.checkbox:has(input:checked) .checkbox-box {
+  background: var(--color-cta);
+  border-color: var(--color-cta);
+}
+
+.checkbox:has(input:checked) .checkbox-box svg {
+  opacity: 1;
+}
+
+.checkbox-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ---------- Honeypot ---------- */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---------- Button ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 14px 22px;
+  border-radius: var(--radius-pill);
+  border: 0;
+  min-height: 52px;
+  width: 100%;
+  transition: transform 80ms ease, background 120ms ease, box-shadow 120ms ease;
+  margin-top: 22px;
+}
+
+.btn--primary {
+  background: var(--color-cta);
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-cta-dark);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-cta);
+  border: 1.5px solid var(--color-cta);
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Form errors ---------- */
+.form-error {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-error-soft);
+  color: var(--color-error);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-disclaimer {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---------- ThankYou ---------- */
+.thankyou {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.thankyou-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.thankyou-title {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.thankyou-text {
+  margin: 0 auto 24px;
+  max-width: 38ch;
+  color: var(--color-text-muted);
+  font-size: 16px;
+}
+
+.thankyou-image {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  margin: 0 auto 24px;
+  border-radius: var(--radius-md);
+}
+
+.thankyou-link {
+  margin: 16px 0 0;
+  font-size: 13px;
+}
+
+.thankyou-link a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.thankyou-link a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ---------- Responsive ---------- */
+/* ---------- Speakers ---------- */
+.speakers {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.speakers-title {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.speakers-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.speaker {
+  flex: 1 1 0;
+  max-width: 130px;
+  display: flex;
+  justify-content: center;
+}
+
+.speaker-bubble {
+  background: transparent;
+  border: 0;
+  padding: 6px 4px;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border-radius: var(--radius-md);
+}
+
+.speaker-bubble:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.speaker-photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-primary-soft);
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.speaker-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.speaker-initials {
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--color-primary);
+}
+
+.speaker-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.speaker-bubble:hover .speaker-photo {
+  border-color: var(--color-accent-border);
+}
+
+.speaker-bubble--selected .speaker-photo {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft), var(--shadow-card);
+}
+
+.speaker-bubble--selected .speaker-name {
+  color: var(--color-primary);
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 36px 32px;
+  }
+
+  .form-title {
+    font-size: 28px;
+  }
+}
