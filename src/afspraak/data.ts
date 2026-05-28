@@ -68,12 +68,20 @@ export type BlockedRange = {
 };
 
 export const BLOCKED: BlockedRange[] = [
+  // Dinsdag 9 juni
   {
     dayIso: '2026-06-09',
     from: '13:15',
     to: '13:45',
     reason: 'Stand 11.01: versneld integraal waterbewuste gebiedsontwikkeling',
   },
+  {
+    dayIso: '2026-06-09',
+    from: '16:00',
+    to: '17:00',
+    reason: 'Stand 11.01 - IGG bouweconomie: Data als fundament, IGG en de toekomst van kosten management',
+  },
+  // Woensdag 10 juni
   {
     dayIso: '2026-06-10',
     from: '11:45',
@@ -82,9 +90,22 @@ export const BLOCKED: BlockedRange[] = [
   },
   {
     dayIso: '2026-06-10',
+    from: '13:15',
+    to: '13:45',
+    reason: 'Stand 11.01 - IGG en BdB Groep: Leiderschap, de cruciale competentie voor ontwikkeling van teams en mensen',
+  },
+  {
+    dayIso: '2026-06-10',
     from: '16:00',
-    to: '18:45',
+    to: '17:00',
     reason: 'Stand 11.01: slimme projecten beginnen met samenwerking',
+  },
+  // Donderdag 11 juni
+  {
+    dayIso: '2026-06-11',
+    from: '13:00',
+    to: '13:30',
+    reason: 'Stand 11.01 - IGG en Objectum: Samen bouwen aan blijvende waarde',
   },
 ];
 
