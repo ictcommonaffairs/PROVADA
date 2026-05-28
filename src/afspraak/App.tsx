@@ -100,7 +100,7 @@ export default function App() {
       <main className="app-main">
         <section className="card form">
           <div className="form-intro">
-            <h1 className="form-title">Plan je 15-minuten afspraak</h1>
+            <h1 className="form-title">Plan een afspraak van 15 minuten</h1>
             <p className="form-subtitle">
               Kies met wie je wilt spreken, op welke dag en hoe laat. We bevestigen de afspraak per mail.
             </p>
@@ -113,7 +113,7 @@ export default function App() {
           <DayPicker selected={dayIso} onChange={setDayIso} />
 
           {blockedForDay.length > 0 && (
-            <ul className="blocked-list" aria-label="Bezette tijden op deze dag">
+            <ul className="blocked-list" aria-label="Vaste presentaties op deze dag">
               {blockedForDay.map((b) => (
                 <li key={`${b.dayIso}-${b.from}`} className="blocked-item">
                   <span className="blocked-time">{b.from}-{b.to}</span>

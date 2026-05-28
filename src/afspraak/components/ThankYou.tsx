@@ -25,8 +25,8 @@ export default function ThankYou({ person, dayLabel, time, onReset }: ThankYouPr
       </div>
       <h2 className="thankyou-title">Aanvraag verstuurd</h2>
       <p className="thankyou-text">
-        Je vraagt een afspraak van 15 minuten aan met <strong>{person}</strong> op{' '}
-        <strong>{dayLabel}</strong> om <strong>{time}</strong>. We bevestigen de afspraak per mail.
+        Je hebt een afspraak van 15 minuten aangevraagd met <strong>{person}</strong> op{' '}
+        <strong>{dayLabel}</strong> om <strong>{time}</strong>. We bevestigen 'm zo snel mogelijk per mail.
       </p>
       <Button variant="ghost" onClick={onReset}>Nog een afspraak aanvragen</Button>
       <p className="thankyou-link">
