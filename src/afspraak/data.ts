@@ -45,11 +45,9 @@ function buildSlots(): string[] {
 
 export const SLOTS: string[] = buildSlots();
 
-// Live availability via Google Apps Script Web App (zie README/instructies).
-// Vul deze URL in nadat je de Apps Script hebt gedeployed; laat leeg om de pagina
-// zonder live-checks te draaien (alleen geblokkeerde presentatieslots zijn dan uit).
-export const AVAILABILITY_URL =
-  'https://script.google.com/macros/s/AKfycbxAGms3-sKeTKxFyAD9aLkc76eU3eSRq4U82lTVuiWjJvopsskz-_Sase1En8NhSks/exec';
+// Live availability via Google Apps Script Web App. URL staat centraal in src/lib/config.ts
+// zodat zowel deze afspraak-app als het citymaker-formulier dezelfde endpoint gebruiken.
+export { APPS_SCRIPT_URL as AVAILABILITY_URL } from '../lib/config';
 
 // Vaste presentatie/Arena-blokken waarin niemand boekbaar is.
 // Een slot is geblokkeerd als de tijd in [from, to) valt op die dag.

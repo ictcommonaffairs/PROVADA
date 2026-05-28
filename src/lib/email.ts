@@ -1,3 +1,5 @@
+import { APPS_SCRIPT_URL } from './config';
+
 // Ontvanger van de aanmeldingen. Pas dit aan als de mail naar een ander adres moet.
 const RECIPIENT = 'tim@commonaffairs.nl';
 
@@ -97,11 +99,47 @@ async function postWeb3Forms(payload: FormPayload): Promise<void> {
   }
 }
 
+async function postAppsScriptLog(payload: FormPayload): Promise<void> {
+  if (!APPS_SCRIPT_URL) return;
+
+  const interestList = [
+    ...payload.interests,
+    payload.interestOther.trim() ? `Anders: ${payload.interestOther.trim()}` : null,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  const body = {
+    kind: 'contact',
+    name: payload.name,
+    company: payload.company,
+    jobTitle: payload.jobTitle,
+    email: payload.email,
+    phone: payload.phone,
+    message: payload.message,
+    interests: interestList,
+    spokeWith: payload.spokeWith,
+  };
+
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('apps script status ' + res.status);
+  const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+  if (!data || data.success !== true) {
+    throw new Error('apps script geen success');
+  }
+}
+
 export async function sendForm(payload: FormPayload): Promise<void> {
-  // Parallel verzenden naar beide routes; eentje succesvol is genoeg voor de bezoeker.
+  // Parallel verzenden naar drie routes: twee mails (FormSubmit, Web3Forms) + sheet-log.
+  // Eentje succesvol is genoeg voor de bezoeker.
   const results = await Promise.allSettled([
     postFormSubmit(payload),
     postWeb3Forms(payload),
+    postAppsScriptLog(payload),
   ]);
 
   const ok = results.some((r) => r.status === 'fulfilled');
