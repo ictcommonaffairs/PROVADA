@@ -54,7 +54,7 @@ type SpeakersProps = {
 export default function Speakers({ selected, onChange }: SpeakersProps) {
   return (
     <section className="speakers">
-      <h2 className="speakers-title">Wie heb je gesproken?</h2>
+      <h2 className="speakers-title">Wie wil je spreken?</h2>
       <ul className="speakers-list">
         {SPEAKERS.map((name) => (
           <Speaker
