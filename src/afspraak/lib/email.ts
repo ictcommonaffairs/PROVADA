@@ -1,5 +1,8 @@
 // Mail-routes voor afspraakaanvragen. Zelfde dubbele verzending als het hoofdformulier:
 // primair via FormSubmit, parallel via Web3Forms (log + backup). Eentje succesvol is genoeg.
+// Daarnaast (optioneel) een schrijfactie naar de Google Apps Script voor live availability.
+
+import { AVAILABILITY_URL } from '../data';
 
 const RECIPIENT = 'tim@commonaffairs.nl';
 const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${RECIPIENT}`;
@@ -79,7 +82,51 @@ async function postWeb3Forms(payload: BookingPayload): Promise<void> {
   }
 }
 
+type WriteResponse = { success?: boolean; error?: string; message?: string };
+
+async function postAvailabilityWrite(payload: BookingPayload): Promise<void> {
+  if (!AVAILABILITY_URL) return; // Geen live availability geconfigureerd: skip.
+
+  // text/plain om de CORS-preflight te vermijden die Apps Script niet beantwoordt.
+  const res = await fetch(AVAILABILITY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      person: payload.person,
+      dayIso: payload.dayIso,
+      dayLabel: payload.dayLabel,
+      time: payload.time,
+      name: payload.name,
+      company: payload.company,
+      email: payload.email,
+      phone: payload.phone,
+      topic: payload.topic,
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(
+      'Beschikbaarheid niet bevestigd, probeer het opnieuw of mail ons op tim@commonaffairs.nl.',
+    );
+  }
+  const data = (await res.json().catch(() => null)) as WriteResponse | null;
+  if (!data || !data.success) {
+    if (data?.error === 'slot_taken') {
+      throw new Error(
+        'Dit tijdslot is net door iemand anders geboekt. Kies een ander slot en probeer opnieuw.',
+      );
+    }
+    throw new Error(
+      'Beschikbaarheid niet bevestigd, probeer het opnieuw of mail ons op tim@commonaffairs.nl.',
+    );
+  }
+}
+
 export async function sendBooking(payload: BookingPayload): Promise<void> {
+  // Eerst (indien geconfigureerd) de live availability check + log naar Google Sheet.
+  // Bij een conflict gooien we hier al, dan slaan we de mail over.
+  await postAvailabilityWrite(payload);
+
+  // Daarna de mail-notificatie via FormSubmit + Web3Forms.
   const results = await Promise.allSettled([
     postFormSubmit(payload),
     postWeb3Forms(payload),

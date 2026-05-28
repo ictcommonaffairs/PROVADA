@@ -44,3 +44,46 @@ function buildSlots(): string[] {
 }
 
 export const SLOTS: string[] = buildSlots();
+
+// Live availability via Google Apps Script Web App (zie README/instructies).
+// Vul deze URL in nadat je de Apps Script hebt gedeployed; laat leeg om de pagina
+// zonder live-checks te draaien (alleen geblokkeerde presentatieslots zijn dan uit).
+export const AVAILABILITY_URL = '';
+
+// Vaste presentatie/Arena-blokken waarin niemand boekbaar is.
+// Een slot is geblokkeerd als de tijd in [from, to) valt op die dag.
+export type BlockedRange = {
+  dayIso: string;
+  from: string; // 'HH:MM' inclusief
+  to: string;   // 'HH:MM' exclusief
+  reason: string;
+};
+
+export const BLOCKED: BlockedRange[] = [
+  {
+    dayIso: '2026-06-09',
+    from: '13:15',
+    to: '13:45',
+    reason: 'Stand 11.01: versneld integraal waterbewuste gebiedsontwikkeling',
+  },
+  {
+    dayIso: '2026-06-10',
+    from: '11:45',
+    to: '12:30',
+    reason: "Arena: lancering rekentool 'Citymaker'",
+  },
+  {
+    dayIso: '2026-06-10',
+    from: '16:00',
+    to: '18:45',
+    reason: 'Stand 11.01: slimme projecten beginnen met samenwerking',
+  },
+];
+
+export function findBlocked(dayIso: string, time: string): BlockedRange | undefined {
+  return BLOCKED.find((b) => b.dayIso === dayIso && time >= b.from && time < b.to);
+}
+
+export type SlotState = 'available' | 'taken' | 'blocked';
+export type SlotStatus = { state: SlotState; reason?: string };
+

@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Speakers from '../components/Speakers';
 import DayPicker from './components/DayPicker';
 import SlotPicker from './components/SlotPicker';
 import BookingForm from './components/BookingForm';
 import ThankYou from './components/ThankYou';
-import { DAYS } from './data';
+import {
+  BLOCKED,
+  DAYS,
+  SLOTS,
+  findBlocked,
+  type SlotStatus,
+} from './data';
 import { sendBooking } from './lib/email';
+import { slotKey, useAvailability } from './useAvailability';
 
 type Confirmed = {
   person: string;
@@ -19,8 +26,30 @@ export default function App() {
   const [slot, setSlot] = useState('');
   const [confirmed, setConfirmed] = useState<Confirmed | null>(null);
 
+  const { taken, loading: loadingAvailability, error: availabilityError } = useAvailability();
+
   const dayLabel = DAYS.find((d) => d.iso === dayIso)?.label ?? '';
   const ready = Boolean(person && dayIso && slot);
+
+  const statuses: Record<string, SlotStatus> = useMemo(() => {
+    const map: Record<string, SlotStatus> = {};
+    for (const time of SLOTS) {
+      const blocked = dayIso ? findBlocked(dayIso, time) : undefined;
+      if (blocked) {
+        map[time] = { state: 'blocked', reason: blocked.reason };
+      } else if (person && dayIso && taken.has(slotKey(person, dayIso, time))) {
+        map[time] = { state: 'taken' };
+      } else {
+        map[time] = { state: 'available' };
+      }
+    }
+    return map;
+  }, [dayIso, person, taken]);
+
+  const blockedForDay = useMemo(
+    () => (dayIso ? BLOCKED.filter((b) => b.dayIso === dayIso) : []),
+    [dayIso],
+  );
 
   if (confirmed) {
     return (
@@ -83,8 +112,32 @@ export default function App() {
           <h2 className="step-title">2. Welke dag?</h2>
           <DayPicker selected={dayIso} onChange={setDayIso} />
 
+          {blockedForDay.length > 0 && (
+            <ul className="blocked-list" aria-label="Bezette tijden op deze dag">
+              {blockedForDay.map((b) => (
+                <li key={`${b.dayIso}-${b.from}`} className="blocked-item">
+                  <span className="blocked-time">{b.from}-{b.to}</span>
+                  <span className="blocked-reason">{b.reason}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
           <h2 className="step-title">3. Welk tijdslot?</h2>
-          <SlotPicker selected={slot} onChange={setSlot} disabled={!person || !dayIso} />
+          {loadingAvailability && (
+            <p className="form-disclaimer">Beschikbaarheid laden...</p>
+          )}
+          {availabilityError && (
+            <p className="form-disclaimer">
+              Beschikbaarheid kon niet geladen worden, je kunt toch een voorkeur doorgeven.
+            </p>
+          )}
+          <SlotPicker
+            selected={slot}
+            onChange={setSlot}
+            disabled={!person || !dayIso}
+            statuses={statuses}
+          />
 
           <h2 className="step-title">4. Jouw gegevens</h2>
           <BookingForm
