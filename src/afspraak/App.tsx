@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Speakers from '../components/Speakers';
 import DayPicker from './components/DayPicker';
 import SlotPicker from './components/SlotPicker';
@@ -9,6 +9,7 @@ import {
   DAYS,
   SLOTS,
   findBlocked,
+  slotsForDay,
   type SlotStatus,
 } from './data';
 import { sendBooking } from './lib/email';
@@ -31,9 +32,18 @@ export default function App() {
   const dayLabel = DAYS.find((d) => d.iso === dayIso)?.label ?? '';
   const ready = Boolean(person && dayIso && slot);
 
+  const daySlots = useMemo(() => (dayIso ? slotsForDay(dayIso) : SLOTS), [dayIso]);
+
+  // Reset het slot als het buiten de nieuwe dag valt (bv. 18:30 op woensdag, dan overschakelen naar donderdag).
+  useEffect(() => {
+    if (slot && !daySlots.includes(slot)) {
+      setSlot('');
+    }
+  }, [daySlots, slot]);
+
   const statuses: Record<string, SlotStatus> = useMemo(() => {
     const map: Record<string, SlotStatus> = {};
-    for (const time of SLOTS) {
+    for (const time of daySlots) {
       const blocked = dayIso ? findBlocked(dayIso, time) : undefined;
       if (blocked) {
         map[time] = { state: 'blocked', reason: blocked.reason };
@@ -44,7 +54,7 @@ export default function App() {
       }
     }
     return map;
-  }, [dayIso, person, taken]);
+  }, [dayIso, person, taken, daySlots]);
 
   const blockedForDay = useMemo(
     () => (dayIso ? BLOCKED.filter((b) => b.dayIso === dayIso) : []),
@@ -137,6 +147,7 @@ export default function App() {
             onChange={setSlot}
             disabled={!person || !dayIso}
             statuses={statuses}
+            slots={daySlots}
           />
 
           <h2 className="step-title">4. Jouw gegevens</h2>

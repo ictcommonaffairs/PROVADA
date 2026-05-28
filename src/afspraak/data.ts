@@ -18,23 +18,25 @@ export type Day = {
   iso: string;
   // Label voor de knop.
   label: string;
+  // Eindtijd voor die dag, exclusief (laatste boekbare slot start = endTime - 15 min).
+  endTime: string;
 };
 
 export const DAYS: Day[] = [
-  { iso: '2026-06-09', label: 'Dinsdag 9 juni' },
-  { iso: '2026-06-10', label: 'Woensdag 10 juni' },
-  { iso: '2026-06-11', label: 'Donderdag 11 juni' },
+  { iso: '2026-06-09', label: 'Dinsdag 9 juni',   endTime: '19:00' },
+  { iso: '2026-06-10', label: 'Woensdag 10 juni', endTime: '19:00' },
+  { iso: '2026-06-11', label: 'Donderdag 11 juni', endTime: '18:00' },
 ];
 
-// Tijdsloten: 10:00 t/m 17:15 in 15-min stappen (laatste 15-min afspraak start 17:15).
-// Pas START_HOUR / END_HOUR / SLOT_MINUTES aan als de openingstijden anders zijn.
+// Tijdsloten: 10:00 tot het maximum van alle dagen, in 15-min stappen.
+// slotsForDay() filtert per dag op die dag-specifieke eindtijd.
 const START_HOUR = 10;
-const END_HOUR = 17.5; // 17:30 = eindtijd
+const END_HOUR_MAX = 19; // overall maximum (langste dag)
 const SLOT_MINUTES = 15;
 
 function buildSlots(): string[] {
   const slots: string[] = [];
-  const totalMinutes = (END_HOUR - START_HOUR) * 60;
+  const totalMinutes = (END_HOUR_MAX - START_HOUR) * 60;
   for (let m = 0; m < totalMinutes; m += SLOT_MINUTES) {
     const h = START_HOUR + Math.floor(m / 60);
     const mm = m % 60;
@@ -44,6 +46,13 @@ function buildSlots(): string[] {
 }
 
 export const SLOTS: string[] = buildSlots();
+
+export function slotsForDay(dayIso: string): string[] {
+  const day = DAYS.find((d) => d.iso === dayIso);
+  if (!day) return SLOTS;
+  // Lexicografisch werkt voor 'HH:MM' (vergelijking is correct omdat het zero-padded is).
+  return SLOTS.filter((t) => t < day.endTime);
+}
 
 // Live availability via Google Apps Script Web App. URL staat centraal in src/lib/config.ts
 // zodat zowel deze afspraak-app als het citymaker-formulier dezelfde endpoint gebruiken.

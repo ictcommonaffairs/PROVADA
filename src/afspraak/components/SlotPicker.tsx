@@ -5,6 +5,7 @@ type SlotPickerProps = {
   onChange: (slot: string) => void;
   disabled?: boolean;
   statuses?: Record<string, SlotStatus>;
+  slots?: string[];
 };
 
 export default function SlotPicker({
@@ -12,6 +13,7 @@ export default function SlotPicker({
   onChange,
   disabled = false,
   statuses = {},
+  slots = SLOTS,
 }: SlotPickerProps) {
   return (
     <div
@@ -19,7 +21,7 @@ export default function SlotPicker({
       role="radiogroup"
       aria-label="Kies een tijdslot"
     >
-      {SLOTS.map((s) => {
+      {slots.map((s) => {
         const status: SlotStatus = statuses[s] ?? { state: 'available' };
         const isSelected = selected === s;
         const isDisabled = disabled || status.state !== 'available';
