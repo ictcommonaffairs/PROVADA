@@ -103,25 +103,10 @@ export async function sendForm(payload: FormPayload): Promise<void> {
     postFormSubmit(payload),
     postWeb3Forms(payload),
   ]);
-  const labels = ['FormSubmit', 'Web3Forms'];
 
-  // Gefaalde routes loggen naar de browser-console voor diagnose.
-  results.forEach((r, i) => {
-    if (r.status === 'rejected') {
-      console.warn(`[Verzenden] ${labels[i]} faalde:`, r.reason);
-    }
-  });
-
-  const ok = results.filter((r) => r.status === 'fulfilled').length;
-  if (ok === 0) {
-    const reasons = results
-      .map((r, i) =>
-        r.status === 'rejected'
-          ? `${labels[i]}: ${r.reason instanceof Error ? r.reason.message : String(r.reason)}`
-          : '',
-      )
-      .filter(Boolean)
-      .join(' | ');
-    throw new Error(`Versturen mislukt. ${reasons || 'Onbekende fout'}`);
+  const ok = results.some((r) => r.status === 'fulfilled');
+  if (!ok) {
+    // Bewust geen provider-namen of fout-details aan de bezoeker tonen.
+    throw new Error('Versturen mislukt. Probeer het opnieuw of mail ons op tim@commonaffairs.nl.');
   }
 }
