@@ -98,7 +98,7 @@ export const BLOCKED: BlockedRange[] = [
     dayIso: '2026-06-10',
     from: '16:00',
     to: '17:00',
-    reason: 'Stand 11.01 - Citymaker: slimme projecten beginnen met samenwerking',
+    reason: 'Stand 11.01 - Citymaker, IGG, BdB Groep & Objectum: slimme projecten beginnen met samenwerking',
   },
   // Donderdag 11 juni
   {
