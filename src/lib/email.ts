@@ -1,9 +1,13 @@
 // Ontvanger van de aanmeldingen. Pas dit aan als de mail naar een ander adres moet.
 const RECIPIENT = 'tim@commonaffairs.nl';
 
-// FormSubmit.co AJAX-endpoint: POST blijft in de pagina (geen redirect) en
-// stuurt de inzending automatisch als e-mail naar RECIPIENT.
-const ENDPOINT = `https://formsubmit.co/ajax/${RECIPIENT}`;
+// Primaire route: FormSubmit.co (AJAX) - stuurt de inzending als e-mail naar RECIPIENT.
+const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${RECIPIENT}`;
+
+// Backup-route + log: Web3Forms. Mailt ook naar het bij de key geregistreerde adres
+// en logt elke inzending in het Web3Forms-dashboard. Key is bedoeld voor client-side gebruik.
+const WEB3FORMS_KEY = 'd68430f3-4107-41c9-8c33-5e8164621c18';
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
 export type FormPayload = {
   name: string;
@@ -47,26 +51,77 @@ export function buildEmailFields(payload: FormPayload): Record<string, string> {
   };
 }
 
-export async function sendForm(payload: FormPayload): Promise<void> {
-  const res = await fetch(ENDPOINT, {
+type EndpointResponse = { success?: boolean | string; message?: string };
+
+async function postFormSubmit(payload: FormPayload): Promise<void> {
+  const res = await fetch(FORMSUBMIT_ENDPOINT, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify(buildEmailFields(payload)),
   });
-
-  if (!res.ok) {
-    throw new Error(`Versturen mislukt (status ${res.status}). Probeer het later opnieuw`);
+  if (!res.ok) throw new Error(`FormSubmit status ${res.status}`);
+  const data = (await res.json().catch(() => null)) as EndpointResponse | null;
+  // FormSubmit retourneert success als string "true".
+  if (!data || String(data.success) !== 'true') {
+    throw new Error(data?.message || 'FormSubmit gaf geen success terug');
   }
+}
 
-  const data = (await res.json().catch(() => null)) as { success?: string; message?: string } | null;
-  if (!data || data.success !== 'true') {
-    throw new Error(
-      data && typeof data.message === 'string'
-        ? data.message
-        : 'Versturen mislukt. Probeer het later opnieuw',
-    );
+async function postWeb3Forms(payload: FormPayload): Promise<void> {
+  // Web3Forms-velden: access_key + subject + reply_to + from_name zijn gereserveerd;
+  // alle overige velden worden als rijen in de mail/dashboard-log opgenomen.
+  const fields = buildEmailFields(payload);
+  // FormSubmit-only velden eruit slopen voor de Web3Forms-payload.
+  const {
+    _subject, _template: _t, _captcha: _c, _replyto, ...rest
+  } = fields;
+  void _t; void _c;
+
+  const body = {
+    access_key: WEB3FORMS_KEY,
+    subject: _subject,
+    reply_to: _replyto,
+    from_name: payload.name,
+    ...rest,
+  };
+
+  const res = await fetch(WEB3FORMS_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`Web3Forms status ${res.status}`);
+  const data = (await res.json().catch(() => null)) as EndpointResponse | null;
+  if (!data || data.success !== true) {
+    throw new Error(data?.message || 'Web3Forms gaf geen success terug');
+  }
+}
+
+export async function sendForm(payload: FormPayload): Promise<void> {
+  // Parallel verzenden naar beide routes; eentje succesvol is genoeg voor de bezoeker.
+  const results = await Promise.allSettled([
+    postFormSubmit(payload),
+    postWeb3Forms(payload),
+  ]);
+  const labels = ['FormSubmit', 'Web3Forms'];
+
+  // Gefaalde routes loggen naar de browser-console voor diagnose.
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.warn(`[Verzenden] ${labels[i]} faalde:`, r.reason);
+    }
+  });
+
+  const ok = results.filter((r) => r.status === 'fulfilled').length;
+  if (ok === 0) {
+    const reasons = results
+      .map((r, i) =>
+        r.status === 'rejected'
+          ? `${labels[i]}: ${r.reason instanceof Error ? r.reason.message : String(r.reason)}`
+          : '',
+      )
+      .filter(Boolean)
+      .join(' | ');
+    throw new Error(`Versturen mislukt. ${reasons || 'Onbekende fout'}`);
   }
 }
