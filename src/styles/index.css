@@ -471,6 +471,8 @@ a {
   display: flex;
   justify-content: center;
   gap: 16px;
+  flex-wrap: wrap;
+  row-gap: 16px;
 }
 
 .speaker {
