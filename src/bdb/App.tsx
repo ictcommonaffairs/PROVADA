@@ -111,7 +111,7 @@ export default function App() {
       <main className="app-main">
         <section className="card form">
           <div className="form-intro">
-            <h1 className="form-title">Plan een afspraak van 30 minuten</h1>
+            <h1 className="form-title">Plan een afspraak van 15 minuten</h1>
             <p className="form-subtitle">
               Kies met wie je wilt spreken, op welke dag en hoe laat.
             </p>

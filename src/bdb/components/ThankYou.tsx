@@ -25,7 +25,7 @@ export default function ThankYou({ person, dayLabel, time, onReset }: ThankYouPr
       </div>
       <h2 className="thankyou-title">Afspraak ingepland</h2>
       <p className="thankyou-text">
-        Je afspraak van 30 minuten met <strong>{person}</strong> op{' '}
+        Je afspraak van 15 minuten met <strong>{person}</strong> op{' '}
         <strong>{dayLabel}</strong> om <strong>{time}</strong> staat ingepland. Tot dan!
       </p>
       <Button variant="ghost" onClick={onReset}>Nog een afspraak inplannen</Button>

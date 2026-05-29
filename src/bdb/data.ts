@@ -61,7 +61,12 @@ export type BlockedRange = {
 };
 
 export const BLOCKED: BlockedRange[] = [
-  // bv. { dayIso: '2026-06-10', from: '13:30', to: '14:00', reason: 'Gezamenlijke presentatie' },
+  {
+    dayIso: '2026-06-10',
+    from: '13:30',
+    to: '14:00',
+    reason: 'Gezamenlijke presentatie',
+  },
 ];
 
 export function findBlocked(dayIso: string, time: string): BlockedRange | undefined {
@@ -78,8 +83,8 @@ export type Unavailable = {
 };
 
 export const UNAVAILABLE: Unavailable[] = [
-  // TODO: hier vult Tim de per-persoon-blokkades in op basis van het schema.
-  // bv. { person: 'Kristen Wokke', dayIso: '2026-06-09', time: '10:00' },
+  { person: 'Kristen Wokke', dayIso: '2026-06-10', time: '14:30', reason: 'Andere afspraak' },
+  // TODO: aanvullen met overige per-persoon blokkades uit het schema.
 ];
 
 export function findUnavailable(
