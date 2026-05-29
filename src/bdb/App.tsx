@@ -75,7 +75,11 @@ export default function App() {
       <div className="app-shell">
         <header className="app-header">
           <div className="brand">
-            <span className="brand-name brand-name--fallback">BdB Groep</span>
+            <img
+              className="brand-logo"
+              src={`${import.meta.env.BASE_URL}bdb/${encodeURI('bdb groep-logo.svg')}`}
+              alt="BdB Groep"
+            />
             <span className="brand-sub">PROVADA 2026</span>
           </div>
         </header>
@@ -103,7 +107,11 @@ export default function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand">
-          <span className="brand-name brand-name--fallback">BdB Groep</span>
+          <img
+            className="brand-logo"
+            src={`${import.meta.env.BASE_URL}bdb/${encodeURI('bdb groep-logo.svg')}`}
+            alt="BdB Groep"
+          />
           <span className="brand-sub">PROVADA 2026 · Afspraak inplannen</span>
         </div>
       </header>
