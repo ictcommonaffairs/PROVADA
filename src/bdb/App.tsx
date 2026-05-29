@@ -9,6 +9,7 @@ import {
   DAYS,
   SLOTS,
   findBlocked,
+  findUnavailable,
   slotsForDay,
   type SlotStatus,
 } from './data';
@@ -46,11 +47,20 @@ export default function App() {
       const blocked = dayIso ? findBlocked(dayIso, time) : undefined;
       if (blocked) {
         map[time] = { state: 'blocked', reason: blocked.reason };
-      } else if (person && dayIso && taken.has(slotKey(person, dayIso, time))) {
-        map[time] = { state: 'taken' };
-      } else {
-        map[time] = { state: 'available' };
+        continue;
       }
+      if (person && dayIso) {
+        const unav = findUnavailable(person, dayIso, time);
+        if (unav) {
+          map[time] = { state: 'blocked', reason: unav.reason ?? 'Niet beschikbaar' };
+          continue;
+        }
+        if (taken.has(slotKey(person, dayIso, time))) {
+          map[time] = { state: 'taken' };
+          continue;
+        }
+      }
+      map[time] = { state: 'available' };
     }
     return map;
   }, [dayIso, person, taken, daySlots]);
@@ -101,7 +111,7 @@ export default function App() {
       <main className="app-main">
         <section className="card form">
           <div className="form-intro">
-            <h1 className="form-title">Plan een afspraak van 15 minuten</h1>
+            <h1 className="form-title">Plan een afspraak van 30 minuten</h1>
             <p className="form-subtitle">
               Kies met wie je wilt spreken, op welke dag en hoe laat.
             </p>

@@ -12,12 +12,12 @@ function initials(name: string): string {
 
 type PersonProps = {
   name: string;
-  photo: string;
+  file: string;
   selected: boolean;
   onToggle: () => void;
 };
 
-function Person({ name, photo, selected, onToggle }: PersonProps) {
+function Person({ name, file, selected, onToggle }: PersonProps) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -33,7 +33,7 @@ function Person({ name, photo, selected, onToggle }: PersonProps) {
             <span className="speaker-initials">{initials(name)}</span>
           ) : (
             <img
-              src={`${import.meta.env.BASE_URL}bdb/${encodeURI(photo)}.jpg`}
+              src={`${import.meta.env.BASE_URL}bdb/${encodeURI(file)}`}
               alt=""
               onError={() => setFailed(true)}
             />
@@ -58,7 +58,7 @@ export default function PersonPicker({ selected, onChange }: PersonPickerProps) 
           <Person
             key={p.name}
             name={p.name}
-            photo={p.photo}
+            file={p.file}
             selected={selected === p.name}
             onToggle={() => onChange(selected === p.name ? '' : p.name)}
           />
