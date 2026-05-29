@@ -16,6 +16,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         afspraak: resolve(__dirname, 'afspraak/index.html'),
+        bdb: resolve(__dirname, 'bdb/index.html'),
       },
     },
   },
