@@ -33,17 +33,13 @@ export const DAYS: Day[] = [
   { iso: '2026-06-11', label: 'Donderdag 11 juni' },
 ];
 
-// Vaste 30-minuten slots (gedeeld over alle drie de dagen).
-// Lunchgat 11:30-13:30 en gat 16:00-16:30 zijn bewust niet boekbaar.
+// Vaste 15-minuten slots (gedeeld over alle drie de dagen).
+// Gaten 11:30-13:30 (lunch), 14:00-14:30, 16:00-16:30 en na 17:00 zijn bewust niet boekbaar.
 export const SLOTS: string[] = [
-  '10:00',
-  '10:30',
-  '11:00',
-  '13:30',
-  '14:30',
-  '15:00',
-  '15:30',
-  '16:30',
+  '10:00', '10:15', '10:30', '10:45', '11:00', '11:15',
+  '13:30', '13:45',
+  '14:30', '14:45', '15:00', '15:15', '15:30', '15:45',
+  '16:30', '16:45',
 ];
 
 export function slotsForDay(_dayIso: string): string[] {
@@ -61,12 +57,12 @@ export type BlockedRange = {
 };
 
 export const BLOCKED: BlockedRange[] = [
-  {
-    dayIso: '2026-06-10',
-    from: '13:30',
-    to: '14:00',
-    reason: 'Gezamenlijke presentatie',
-  },
+  // Eerste half uur elke dag voor iedereen geblokkeerd.
+  { dayIso: '2026-06-09', from: '10:00', to: '10:30', reason: 'Niet beschikbaar' },
+  { dayIso: '2026-06-10', from: '10:00', to: '10:30', reason: 'Niet beschikbaar' },
+  { dayIso: '2026-06-11', from: '10:00', to: '10:30', reason: 'Niet beschikbaar' },
+  // Gezamenlijke presentatie.
+  { dayIso: '2026-06-10', from: '13:30', to: '14:00', reason: 'Gezamenlijke presentatie' },
 ];
 
 export function findBlocked(dayIso: string, time: string): BlockedRange | undefined {
@@ -83,8 +79,29 @@ export type Unavailable = {
 };
 
 export const UNAVAILABLE: Unavailable[] = [
+  // Rosa, dinsdag 14:30-15:00
+  { person: 'Rosa Bosman',   dayIso: '2026-06-09', time: '14:30' },
+  { person: 'Rosa Bosman',   dayIso: '2026-06-09', time: '14:45' },
+
+  // Kristen, woensdag 14:30-15:00 (andere afspraak)
   { person: 'Kristen Wokke', dayIso: '2026-06-10', time: '14:30', reason: 'Andere afspraak' },
-  // TODO: aanvullen met overige per-persoon blokkades uit het schema.
+  { person: 'Kristen Wokke', dayIso: '2026-06-10', time: '14:45', reason: 'Andere afspraak' },
+
+  // Rosa, woensdag 15:30-16:00
+  { person: 'Rosa Bosman',   dayIso: '2026-06-10', time: '15:30' },
+  { person: 'Rosa Bosman',   dayIso: '2026-06-10', time: '15:45' },
+
+  // Kristen, donderdag 15:30-16:00
+  { person: 'Kristen Wokke', dayIso: '2026-06-11', time: '15:30' },
+  { person: 'Kristen Wokke', dayIso: '2026-06-11', time: '15:45' },
+
+  // Rianne, donderdag 11:00-11:30
+  { person: 'Rianne Pape',   dayIso: '2026-06-11', time: '11:00' },
+  { person: 'Rianne Pape',   dayIso: '2026-06-11', time: '11:15' },
+
+  // Rianne, donderdag 15:30-16:00
+  { person: 'Rianne Pape',   dayIso: '2026-06-11', time: '15:30' },
+  { person: 'Rianne Pape',   dayIso: '2026-06-11', time: '15:45' },
 ];
 
 export function findUnavailable(
