@@ -544,6 +544,11 @@ a {
   color: var(--color-primary);
 }
 
+/* ---------- BdB-pagina: eigen achtergrond (rest van de styles deelt) ---------- */
+body.bdb-page {
+  background-image: linear-gradient(180deg, #dcd6c7 0%, #f5f0e5 32%);
+}
+
 /* ---------- Afspraak / booking flow ---------- */
 .step-title {
   margin: 22px 0 12px;
