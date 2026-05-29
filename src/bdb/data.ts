@@ -15,8 +15,8 @@ export type Person = {
 
 export const PEOPLE: Person[] = [
   { name: 'Kristen Wokke',        file: 'Kristen Wokke.jpg' },
-  { name: 'Sebastiaan Tiemessen', file: 'Sebastiaan Tiemessen.jpg' },
   { name: 'Rosa Bosman',          file: 'Rosa Bosman.jpg' },
+  { name: 'Sebastiaan Tiemessen', file: 'Sebastiaan Tiemessen.jpg' },
   { name: 'Martijn Scheijde',     file: 'Martijn Scheijde.png' },
   { name: 'Rianne Pape',          file: 'Rianne Pape.png' },
 ];
